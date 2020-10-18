@@ -12,7 +12,7 @@ int main()
 	bool key;
 
 
-	do {
+	do {//цикл ввода значения сдвига(будет работать пока пользователь не введет число корректно)
 		key = true;
 		cout << "Введите велечину сдвига(допускается отрицательное значение): ";
 		cin >> test_offset;
@@ -27,7 +27,7 @@ int main()
 
 
 	offset = atoi(test_offset.c_str());
-	do {
+	do {//цикл ввода команды
 		cout << "Введите encode для кодирования или decode для расшифровки: ";
 		cin >> command;
 		if (command == "decode") {
@@ -40,7 +40,7 @@ int main()
 	cout << "Введите предложение(любые нелатинские символы не будут зашифрованы или расшифрованы): ";
 	cin >> start_line;
 	final_line.resize(start_line.length());
-	for (int i = 0; i < start_line.length(); i++) {
+	for (int i = 0; i < start_line.length(); i++) {//цикл, который проходит все символы введенной строки и сдвигает символы латиницы в соответствии с UNICODE
 		if ((start_line[i] > 96) and (start_line[i] < 123)) {
 			symbol = start_line[i] += offset;
 			symbol = char(97 + (26 * (1 - (symbol / 97))) + ((symbol - 97) % 26));
@@ -53,9 +53,9 @@ int main()
 		}
 
 		else {
-			final_line[i] = start_line[i];
+			final_line[i] = start_line[i];//если символы не латинские, то они сохраняются 
 		}
 	}
-	cout << "Результат: " << final_line;
+	cout << "Результат: " << final_line;//вывод результата
 
 }

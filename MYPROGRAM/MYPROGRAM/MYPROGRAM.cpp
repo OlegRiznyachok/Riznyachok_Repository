@@ -1,25 +1,39 @@
 ﻿#include <string>
 #include <iostream>
 #include <Windows.h>
+#include <string>
+#include <iostream>
+#include <Windows.h>
+#include <ctime>
+#include <fstream>
 using namespace std;
+string time() {
+	char str[26];
+	time_t result = time(NULL);
+	ctime_s(str, sizeof str, &result);
+
+	return str;
+}
 int main()
 {
-
+	string path = "log.txt";
 	setlocale(LC_ALL, "Russian");
 	string start_line, final_line, command, test_offset;
 	char symbol;
 	int offset;
 	bool key;
-
-
+	ofstream fout(path, ios_base::app);
+	fout << "INFO : The program started : " << time();
 	do {//цикл ввода значения сдвига(будет работать пока пользователь не введет число корректно)
 		key = true;
 		cout << "Введите велечину сдвига(допускается отрицательное значение): ";
-		cin >> test_offset;
+		//cin >> test_offset;
+		getline(cin, test_offset);
 		for (int i = 0; i < test_offset.length(); i++) {
 			if ((!isdigit(test_offset[i])) and (test_offset[i] != '-')) {
 				key = false;
 				cout << "Должно быть введено только число. Попробуйте еще раз." << endl;
+				fout << "WARNING : The user entered an invalid offset value : " << time();
 				break;
 			}
 		}
@@ -29,16 +43,21 @@ int main()
 	offset = atoi(test_offset.c_str());
 	do {//цикл ввода команды
 		cout << "Введите encode для кодирования или decode для расшифровки: ";
-		cin >> command;
+
+		getline(cin, command);
+
 		if (command == "decode") {
 			offset *= -1;
 		}
 		else if (command != "encode") {
 			cout << "Команда введена некорректно. Попробуйте еще раз." << endl;
+			fout << "WARNING : The user entered an invalid command : " << time();
 		}
 	} while ((command != "encode") and (command != "decode"));
 	cout << "Введите предложение(любые нелатинские символы не будут зашифрованы или расшифрованы): ";
-	cin >> start_line;
+	getline(cin, start_line);
+	cout << endl;
+
 	final_line.resize(start_line.length());
 	for (int i = 0; i < start_line.length(); i++) {//цикл, который проходит все символы введенной строки и сдвигает символы латиницы в соответствии с UNICODE
 		if ((start_line[i] > 96) and (start_line[i] < 123)) {
@@ -57,5 +76,13 @@ int main()
 		}
 	}
 	cout << "Результат: " << final_line;//вывод результата
-
+	if (command == "encode") {
+		fout << "INFO : Message successfully encoded : " << time();
+	}
+	else {
+		fout << "INFO : Message successfully decoded : " << time();
+	}
+	fout << "INFO : The program completed : " << time();
+	fout << endl;
+	fout.close();
 }
